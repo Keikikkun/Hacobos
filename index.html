@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hacobos Bread - Café & Pizzeria</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- ==================== NAVBAR ==================== -->
+    <nav class="navbar">
+      <div class="container">
+        <a class="navbar-brand" href="#home">
+          <img
+            src="images/Profile.jpg"
+            alt="Hacobos Bread"
+            height="38"
+            class="navbar-logo"
+          />
+          <span class="navbar-brand-text">Hacobos Bread</span>
+        </a>
+        <ul class="navbar-menu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#location">Location</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <h2>Welcome to Hacobos Bread</h2>
+        <p>Freshly Baked Pizzas & Artisan Coffee</p>
+        <button class="btn btn-primary">Order Now</button>
+      </div>
+    </section>
+
+    <!-- ==================== ABOUT US SECTION ==================== -->
+    <section id="about" class="about">
+      <div class="container">
+        <h2>About Us</h2>
+        <div class="about-content">
+          <div class="about-text">
+            <p>
+              Welcome to Hacobos Bread, your neighborhood café and pizzeria.
+              Since 2015, we've been committed to serving the finest quality
+              pizzas, pastries, and coffee to our beloved community.
+            </p>
+            <p>
+              Our pizzas are made with authentic Italian recipes using fresh,
+              locally-sourced ingredients. Every cup of coffee is hand-crafted
+              by our experienced baristas to ensure the perfect flavor in every
+              sip.
+            </p>
+          </div>
+          <div class="about-image">
+            <div
+              id="aboutCarousel"
+              class="carousel slide"
+              data-bs-ride="carousel"
+            >
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <img
+                    src="images/Area1.jpg"
+                    class="d-block w-100"
+                    alt="Area landscape 1"
+                  />
+                </div>
+                <div class="carousel-item">
+                  <img
+                    src="images/Area2.jpg"
+                    class="d-block w-100"
+                    alt="Area landscape 2"
+                  />
+                </div>
+                <div class="carousel-item">
+                  <img
+                    src="images/Area3.jpg"
+                    class="d-block w-100"
+                    alt="Area landscape 3"
+                  />
+                </div>
+                <div class="carousel-item">
+                  <img
+                    src="images/Area4.jpg"
+                    class="d-block w-100"
+                    alt="Area landscape 4"
+                  />
+                </div>
+              </div>
+              <button
+                class="carousel-control-prev"
+                type="button"
+                data-bs-target="#aboutCarousel"
+                data-bs-slide="prev"
+              >
+                <span
+                  class="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button
+                class="carousel-control-next"
+                type="button"
+                data-bs-target="#aboutCarousel"
+                data-bs-slide="next"
+              >
+                <span
+                  class="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MENU SECTION ==================== -->
+    <section id="menu" class="menu">
+      <div class="container">
+        <h2>Our Menu</h2>
+
+        <!-- Pizza Section -->
+        <div class="menu-category">
+          <h3>🍕 Pizzas</h3>
+          <div class="menu-items">
+            <div class="menu-item">
+              <h4>Margherita</h4>
+              <p>Classic tomato sauce, mozzarella, fresh basil</p>
+              <span class="price">$12.99</span>
+            </div>
+            <div class="menu-item">
+              <h4>Pepperoni</h4>
+              <p>Tomato sauce, mozzarella, pepperoni slices</p>
+              <span class="price">$14.99</span>
+            </div>
+            <div class="menu-item">
+              <h4>Veggie Supreme</h4>
+              <p>Mushrooms, bell peppers, onions, olives, spinach</p>
+              <span class="price">$13.99</span>
+            </div>
+            <div class="menu-item">
+              <h4>Meat Lovers</h4>
+              <p>Pepperoni, bacon, ham, sausage</p>
+              <span class="price">$16.99</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coffee Section -->
+        <div class="menu-category">
+          <h3>☕ Coffee & Beverages</h3>
+          <div class="menu-items">
+            <div class="menu-item">
+              <h4>Espresso</h4>
+              <p>Rich, bold, and aromatic</p>
+              <span class="price">$3.50</span>
+            </div>
+            <div class="menu-item">
+              <h4>Cappuccino</h4>
+              <p>Espresso with steamed milk and foam</p>
+              <span class="price">$4.50</span>
+            </div>
+            <div class="menu-item">
+              <h4>Latte</h4>
+              <p>Smooth espresso with velvety steamed milk</p>
+              <span class="price">$4.50</span>
+            </div>
+            <div class="menu-item">
+              <h4>Americano</h4>
+              <p>Bold espresso with hot water</p>
+              <span class="price">$3.99</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pastries Section -->
+        <div class="menu-category">
+          <h3>🥐 Pastries & Treats</h3>
+          <div class="menu-items">
+            <div class="menu-item">
+              <h4>Croissant</h4>
+              <p>Buttery and flaky French pastry</p>
+              <span class="price">$3.99</span>
+            </div>
+            <div class="menu-item">
+              <h4>Chocolate Donut</h4>
+              <p>Freshly made with rich chocolate coating</p>
+              <span class="price">$2.50</span>
+            </div>
+            <div class="menu-item">
+              <h4>Almond Croissant</h4>
+              <p>Classic croissant topped with sliced almonds</p>
+              <span class="price">$4.50</span>
+            </div>
+            <div class="menu-item">
+              <h4>Cheese Cake Slice</h4>
+              <p>Creamy and delicious homemade cheesecake</p>
+              <span class="price">$4.99</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LOCATION & HOURS SECTION ==================== -->
+    <section id="location" class="location">
+      <div class="container">
+        <h2>Location & Hours</h2>
+        <div class="location-content">
+          <div class="location-info">
+            <h3>Visit Us</h3>
+            <p>
+              <strong>Address:</strong><br />
+              Lot 7, Block 7 <br />
+              Golden Villas Subdivision <br />
+              Alapan I-A<br />
+              Imus <br />
+              Cavite
+            </p>
+            <p>
+              <strong>Phone:</strong><br />
+              +63 925-483-0571
+            </p>
+            <p>
+              <strong>Email:</strong><br />
+              hello@hacobosbread.com
+            </p>
+          </div>
+
+          <div class="location-hours">
+            <h3>Opening Hours</h3>
+            <ul class="hours-list">
+              <li><span>Monday - Friday:</span> 7:00 AM - 9:00 PM</li>
+              <li><span>Saturday:</span> 8:00 AM - 10:00 PM</li>
+              <li><span>Sunday:</span> 9:00 AM - 8:00 PM</li>
+            </ul>
+          </div>
+
+          <div class="location-map">
+            <img
+              src="../Hacobos/images/location.png"
+              alt="Hacobos Bread Location Map"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h4>About Hacobos Bread</h4>
+            <p>Quality coffee and authentic pizzas since 2015</p>
+          </div>
+          <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#menu">Menu</a></li>
+              <li><a href="#location">Location</a></li>
+              <li><a href="#about">About</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Follow Us</h4>
+            <p>
+              <a href="#">Facebook</a> | <a href="#">Instagram</a> |
+              <a href="#">Twitter</a>
+            </p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2024 Hacobos Bread. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+    <!-- Progressive Enhancement: Premium interactive features -->
+    <script src="../scripts/script.js" defer></script>
+  </body>
+</html>
