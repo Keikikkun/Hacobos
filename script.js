@@ -193,84 +193,122 @@
 })();
 
 // ============================================================================
-// 4. CAROUSEL KEYBOARD & FOCUS MANAGEMENT
+// 4. CAROUSEL KEYBOARD & AUTO-PLAY CONTROL
 // ============================================================================
-// Enhances Bootstrap carousel with keyboard navigation & accessible focus.
-// Arrow keys: Left = prev, Right = next. Home/End keys for first/last slide.
-// Degrades: Without JS, carousel still works with mouse/touch; keyboard skipped.
+// Pure JavaScript carousel without Bootstrap dependency.
+// Auto-plays every 5 seconds. Arrow keys, Home/End navigate images.
+// Pauses on hover. Degrades: Works with mouse buttons only if JS disabled.
 
 (function () {
   const carousel = document.querySelector('#aboutCarousel');
   if (!carousel) return;
 
-  // Check if user prefers reduced motion
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = carousel.querySelectorAll('.carousel-item');
+  const prevBtn = carousel.querySelector('.carousel-control-prev');
+  const nextBtn = carousel.querySelector('.carousel-control-next');
+  
+  if (items.length === 0) return;
+
+  let currentIndex = 0;
+  let autoPlayInterval;
+  const autoPlayDelay = 5000; // 5 seconds
+
+  // Show specific slide
+  function showSlide(index) {
+    // Wrap around
+    if (index >= items.length) {
+      currentIndex = 0;
+    } else if (index < 0) {
+      currentIndex = items.length - 1;
+    } else {
+      currentIndex = index;
+    }
+
+    // Remove active class from all items
+    items.forEach(item => item.classList.remove('active'));
+    
+    // Add active class to current item
+    items[currentIndex].classList.add('active');
+  }
+
+  // Next slide
+  function nextSlide() {
+    showSlide(currentIndex + 1);
+  }
+
+  // Previous slide
+  function prevSlide() {
+    showSlide(currentIndex - 1);
+  }
+
+  // Start auto-play
+  function startAutoPlay() {
+    autoPlayInterval = setInterval(nextSlide, autoPlayDelay);
+  }
+
+  // Stop auto-play
+  function stopAutoPlay() {
+    clearInterval(autoPlayInterval);
+  }
+
+  // Restart auto-play
+  function restartAutoPlay() {
+    stopAutoPlay();
+    startAutoPlay();
+  }
+
+  // Button click handlers
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      prevSlide();
+      restartAutoPlay();
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      nextSlide();
+      restartAutoPlay();
+    });
+  }
 
   // Keyboard navigation
   carousel.addEventListener('keydown', function (event) {
-    const bootstrapCarousel = window.bootstrap && bootstrap.Carousel.getInstance(carousel);
-    if (!bootstrapCarousel) return;
-
     switch (event.key) {
       case 'ArrowLeft':
         event.preventDefault();
-        bootstrapCarousel.prev();
+        prevSlide();
+        restartAutoPlay();
         break;
       case 'ArrowRight':
         event.preventDefault();
-        bootstrapCarousel.next();
+        nextSlide();
+        restartAutoPlay();
         break;
       case 'Home':
         event.preventDefault();
-        // Jump to first slide
-        const items = carousel.querySelectorAll('.carousel-item');
-        items.forEach((item, index) => {
-          item.classList.toggle('active', index === 0);
-        });
+        showSlide(0);
+        restartAutoPlay();
         break;
       case 'End':
         event.preventDefault();
-        // Jump to last slide
-        const allItems = carousel.querySelectorAll('.carousel-item');
-        allItems.forEach((item, index) => {
-          item.classList.toggle('active', index === allItems.length - 1);
-        });
+        showSlide(items.length - 1);
+        restartAutoPlay();
         break;
     }
   });
 
-  // Pause carousel on hover (accessibility: gives users time to read)
-  carousel.addEventListener('mouseenter', function () {
-    const bootstrapCarousel = window.bootstrap && bootstrap.Carousel.getInstance(carousel);
-    if (bootstrapCarousel) {
-      bootstrapCarousel.pause();
-    }
-  });
+  // Pause on hover
+  carousel.addEventListener('mouseenter', stopAutoPlay);
+  carousel.addEventListener('mouseleave', startAutoPlay);
 
-  carousel.addEventListener('mouseleave', function () {
-    const bootstrapCarousel = window.bootstrap && bootstrap.Carousel.getInstance(carousel);
-    if (bootstrapCarousel) {
-      bootstrapCarousel.cycle();
-    }
-  });
-
-  // Focus management: when slide changes, announce to screen readers
-  carousel.addEventListener('slid.bs.carousel', function () {
-    const activeItem = carousel.querySelector('.carousel-item.active');
-    if (activeItem) {
-      const img = activeItem.querySelector('img');
-      if (img) {
-        // Screen readers will announce the image alt text
-        img.setAttribute('tabindex', '-1');
-        img.focus({ preventScroll: true });
-      }
-    }
-  });
-
-  // Make carousel focusable and add focus indicator (keyboard users)
-  carousel.setAttribute('tabindex', '-1');
+  // Accessibility: Make carousel focusable
+  carousel.setAttribute('tabindex', '0');
   carousel.setAttribute('role', 'region');
-  carousel.setAttribute('aria-label', 'About Us Photo Gallery');
+  carousel.setAttribute('aria-label', 'Image carousel - use arrow keys to navigate');
+
+  // Start auto-play when page loads
+  startAutoPlay();
 })();
 
 // ============================================================================

@@ -272,23 +272,29 @@ body {
     display: block;
 }
 
-/* Carousel Styles */
+/* Carousel Styles - Pure JavaScript (No Bootstrap) */
 #aboutCarousel {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+    position: relative;
 }
 
 .carousel-inner {
     border-radius: 12px;
+    position: relative;
 }
 
 .carousel-item {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     min-height: 400px;
     background-color: var(--bg-medium);
+}
+
+.carousel-item.active {
+    display: flex;
 }
 
 .carousel-item img {
@@ -300,18 +306,34 @@ body {
 
 .carousel-control-prev,
 .carousel-control-next {
+    position: absolute;
     background-color: rgba(0, 0, 0, 0.3);
+    border: none;
     border-radius: 50%;
     width: 44px;
     height: 44px;
     top: 50%;
     transform: translateY(-50%);
     transition: background-color 0.3s ease;
+    cursor: pointer;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0;
 }
 
 .carousel-control-prev:hover,
 .carousel-control-next:hover {
     background-color: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-control-prev:focus-visible,
+.carousel-control-next:focus-visible {
+    outline: 2px solid var(--accent-gold);
+    outline-offset: 2px;
 }
 
 .carousel-control-prev {
@@ -320,12 +342,6 @@ body {
 
 .carousel-control-next {
     right: 15px;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    width: 24px;
-    height: 24px;
 }
 
 /* Mobile about section */
