@@ -372,5 +372,110 @@
 })();
 
 // ============================================================================
+// 6. MENU ITEM HOVER PREVIEW - Progressive Enhancement
+// ============================================================================
+// Loads product images dynamically for menu items on hover.
+// Images are loaded from data-image attribute (progressive enhancement).
+// If JS is disabled, preview bubble remains hidden (graceful degradation).
+// 
+// Features:
+// - Lazy-loads images on first hover (performance)
+// - Works with :hover (desktop) and :focus-within (keyboard/accessibility)
+// - Touch-friendly: no special handling needed (CSS :hover works on touch)
+// - No console errors if images missing or JavaScript disabled
+//
+// Degrades: Without JS, preview bubbles won't show (CSS hides them by default).
+// With JS, they appear smoothly on hover with image content.
+
+(function () {
+  // Select all menu items that have a data-image attribute
+  const menuItemsWithImages = document.querySelectorAll('.menu-item[data-image]');
+  
+  if (menuItemsWithImages.length === 0) return; // No items to enhance
+  
+  // Track which images have been loaded (avoid re-loading)
+  const loadedImages = new Set();
+  
+  /**
+   * Load image for a menu item
+   * @param {HTMLElement} menuItem - The menu item element
+   * @param {string} imageName - Name of the image file (from data-image)
+   */
+  function loadPreviewImage(menuItem, imageName) {
+    // Skip if already loaded
+    if (loadedImages.has(imageName)) return;
+    
+    const previewImg = menuItem.querySelector('.preview-image');
+    if (!previewImg) return; // No image element found
+    
+    // Construct image path: /images/Menu/imageName
+    const imagePath = `images/Menu/${imageName}`;
+    
+    // Create a test image to verify it exists before assigning
+    const testImg = new Image();
+    
+    testImg.onload = function () {
+      // Image exists and loaded successfully
+      previewImg.src = imagePath;
+      previewImg.style.opacity = '0';
+      previewImg.style.transition = 'opacity 0.3s ease-in';
+      
+      // Fade in the image
+      setTimeout(() => {
+        previewImg.style.opacity = '1';
+      }, 10);
+      
+      loadedImages.add(imageName);
+    };
+    
+    testImg.onerror = function () {
+      // Image not found or failed to load - silently fail
+      // The preview bubble will still show (white background, arrow)
+      // but without the image
+      console.warn(`Menu preview image not found: ${imagePath}`);
+    };
+    
+    // Start loading
+    testImg.src = imagePath;
+  }
+  
+  /**
+   * Set up hover/focus listeners for each menu item
+   */
+  menuItemsWithImages.forEach(function (menuItem) {
+    const imageName = menuItem.getAttribute('data-image');
+    if (!imageName) return;
+    
+    // Load image on mouseenter (desktop hover)
+    menuItem.addEventListener('mouseenter', function () {
+      loadPreviewImage(menuItem, imageName);
+    }, { once: false, passive: true });
+    
+    // Also load on focus (keyboard navigation)
+    menuItem.addEventListener('focus', function () {
+      loadPreviewImage(menuItem, imageName);
+    }, { once: false, passive: true, capture: true });
+    
+    // Touch devices: load on touchstart
+    menuItem.addEventListener('touchstart', function () {
+      loadPreviewImage(menuItem, imageName);
+    }, { once: false, passive: true });
+  });
+  
+  // Bonus: Pre-load critical images (first 2 images in viewport)
+  // This improves perceived performance without lazy-loading complexity
+  const firstTwoImages = Array.from(menuItemsWithImages).slice(0, 2);
+  firstTwoImages.forEach(function (menuItem) {
+    const imageName = menuItem.getAttribute('data-image');
+    if (imageName) {
+      const previewImg = menuItem.querySelector('.preview-image');
+      if (previewImg) {
+        previewImg.src = `images/Menu/${imageName}`;
+      }
+    }
+  });
+})();
+
+// ============================================================================
 // End of script
 // ============================================================================

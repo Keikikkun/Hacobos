@@ -272,29 +272,92 @@ body {
     display: block;
 }
 
-/* Carousel Styles - Pure JavaScript (No Bootstrap) */
+/* Carousel Styles - Pure JavaScript with CSS Cross-Fade Transition (No Bootstrap) */
+
+/* 
+   CAROUSEL CROSS-FADE IMPLEMENTATION:
+   
+   Instead of instant display: none/flex changes, we use opacity transitions
+   for a smooth cross-fade effect. The carousel-item elements are stacked
+   absolutely, and opacity is toggled to create the fade effect.
+   
+   Key technique:
+   - All items position: absolute, but display: flex to allow layout
+   - Initial state: opacity: 0, pointer-events: none (not interactive)
+   - Active state: opacity: 1, pointer-events: auto (interactive during fade)
+   - Transition: opacity 600ms ease-in-out (smooth fade)
+   - prefers-reduced-motion: Instant change (no animation)
+   
+   This prevents layout shift (CLS) and works well with auto-play timing.
+*/
+
 #aboutCarousel {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
     position: relative;
+    /* Set fixed height to prevent jitter during transitions */
+    min-height: 400px;
 }
 
 .carousel-inner {
     border-radius: 12px;
     position: relative;
+    /* Establish stacking context for absolutely positioned items */
+    width: 100%;
+    height: 100%;
+    /* Ensure container height matches item min-height to prevent collapse */
+    min-height: 400px;
 }
 
+/*
+  Carousel Item Base State
+  - position: absolute with full dimensions creates stacking layout
+  - opacity: 0 hides non-active items
+  - transition on opacity creates the cross-fade effect
+  - pointer-events: none prevents interaction with hidden items
+*/
 .carousel-item {
-    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
     align-items: center;
     justify-content: center;
     min-height: 400px;
     background-color: var(--bg-medium);
+    
+    /* Cross-fade setup */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 600ms ease-in-out;
+    
+    /* Prevent cumulative layout shift during transition */
+    will-change: opacity;
 }
 
+/*
+  Active Carousel Item
+  - opacity: 1 shows the current slide
+  - pointer-events: auto re-enables interactivity (focus, links, etc.)
+*/
 .carousel-item.active {
-    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Respect user's motion preference: disable animation if requested */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-item {
+        transition: none;
+        opacity: 0;
+    }
+    
+    .carousel-item.active {
+        opacity: 1;
+    }
 }
 
 .carousel-item img {
@@ -411,6 +474,9 @@ body {
     border-radius: 10px;
     border: 1px solid var(--bg-medium);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    /* Position: relative needed for absolute positioning of preview bubble */
+    position: relative;
+    overflow: visible;
 }
 
 .menu-item:hover {
@@ -438,6 +504,154 @@ body {
     font-size: 1.35rem;
     font-weight: 700;
     color: var(--accent-rose);
+}
+
+/*
+  Menu Sizes List - For items with variants (e.g., Mini/Small/Regular, R/L)
+  Displays each size option with its price cleanly without bullet points.
+  Each line shows: [Size] [Price]
+*/
+.menu-sizes {
+    list-style: none;
+    margin-top: 1rem;
+    padding: 0;
+}
+
+.menu-sizes li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--bg-medium);
+    font-size: 0.95rem;
+}
+
+.menu-sizes li:last-child {
+    border-bottom: none;
+}
+
+.menu-sizes .size {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.menu-sizes .price {
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/*
+ * ============================================================================
+ * MENU ITEM HOVER PREVIEW - Premium Product Image Bubble
+ * ============================================================================
+ * Displays a subtle, speech-bubble-style product image preview on hover/focus.
+ * Pure CSS-driven with smooth slide-up + fade-in animation.
+ * Respects prefers-reduced-motion for accessibility.
+ *
+ * Features:
+ * - Speech bubble design with downward-pointing arrow/tail
+ * - Positioned above menu item (absolute, won't cause layout shift)
+ * - Smooth animations: opacity 0→1 + translateY (+20px→0)
+ * - Duration: 0.4s ease-out for natural feel
+ * - Premium shadow for depth
+ * - Touch-friendly: works with :hover on desktop, :focus for accessibility
+ *
+ * Markup structure:
+ * <div class="menu-item" data-image="ProductName.jpg">
+ *   <h4>Product Name</h4>
+ *   <div class="menu-item-preview">
+ *     <img src="" alt="..." class="preview-image" />
+ *     <span class="preview-arrow"></span>
+ *   </div>
+ *   <!-- price/sizes content -->
+ * </div>
+ * ============================================================================
+ */
+
+.menu-item-preview {
+    /* Hidden by default - only shown on hover/focus */
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    
+    /* Positioning: centered horizontally, above the item */
+    top: -220px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    
+    /* Smooth animation entrance */
+    transition: opacity 0.4s ease-out,
+                transform 0.4s ease-out,
+                visibility 0.4s ease-out;
+    
+    /* Container for bubble + arrow */
+    z-index: 1000;
+}
+
+/* Bubble container with image */
+.menu-item-preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    /* Ensure image displays above white background */
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Image within the preview */
+.preview-image {
+    position: relative;
+    display: block;
+    width: 280px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 14px;
+    z-index: 2;
+    pointer-events: none;
+    /* Hardware acceleration for smooth fade-in */
+    will-change: opacity;
+}
+
+/* Downward-pointing arrow/tail (speech bubble style) */
+.preview-arrow {
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid var(--white);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Show preview on menu item hover */
+.menu-item:hover .menu-item-preview,
+.menu-item:focus-within .menu-item-preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/*
+ * Accessibility: Respect motion preference
+ * Users with prefers-reduced-motion: reduce will see instant appearance
+ */
+@media (prefers-reduced-motion: reduce) {
+    .menu-item-preview {
+        transition: opacity 0.1s ease-out,
+                    transform 0.1s ease-out,
+                    visibility 0.1s ease-out;
+    }
 }
 
 /* Mobile menu section */
