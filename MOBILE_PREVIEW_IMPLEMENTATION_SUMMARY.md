@@ -12,6 +12,7 @@
 A **mobile-friendly toggle system** for menu item preview bubbles that:
 
 ### ✨ Mobile Behavior (Touch Devices)
+
 - **Tap menu item** → preview slides up + fades in (stays open)
 - **Tap same item again** → preview slides down + fades out (closes)
 - **Tap different item** → smooth transition (close old + open new)
@@ -20,6 +21,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - Respects motion preferences (instant if prefers-reduced-motion)
 
 ### 🖱️ Desktop Behavior (Unchanged)
+
 - **Hover menu item** → preview appears via native CSS :hover
 - **Move away** → preview disappears
 - Pure CSS, no JavaScript
@@ -27,6 +29,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - Same animations as mobile
 
 ### 🎯 Hybrid Devices
+
 - Smart detection via `window.matchMedia('(hover: hover)')`
 - If hover capable → use desktop behavior (pure CSS)
 - If touch-only → use mobile behavior (toggle via JS)
@@ -37,6 +40,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 ## Implementation Details
 
 ### CSS Changes
+
 **File:** `styles.css` (lines 768-775)
 
 ```css
@@ -46,14 +50,15 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
  * Desktop hover behavior takes precedence
  */
 .menu-item.is-preview-open .menu-item-preview {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
 }
 ```
 
 **Impact:**
+
 - 10 lines added
 - No HTML changes
 - No CSS selectors changed
@@ -61,51 +66,61 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - Desktop `:hover` still works perfectly
 
 ### JavaScript Changes
+
 **File:** `script.js` (lines 523-565, Section 9)
 
 ```javascript
 (function () {
   // Detect if device supports hover (desktop) or touch-only (mobile)
-  const isHoverCapable = window.matchMedia('(hover: hover)').matches;
+  const isHoverCapable = window.matchMedia("(hover: hover)").matches;
   if (isHoverCapable) return; // Desktop: use native hover, skip touch logic
-  
-  const menuItems = document.querySelectorAll('.menu-item[data-image]');
+
+  const menuItems = document.querySelectorAll(".menu-item[data-image]");
   if (menuItems.length === 0) return;
-  
+
   let currentOpenItem = null; // Track which item has preview open
-  
+
   // Toggle preview on menu item tap
   menuItems.forEach(function (menuItem) {
-    menuItem.addEventListener('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      if (currentOpenItem === menuItem) {
-        // Same item tapped again: close the preview
-        menuItem.classList.remove('is-preview-open');
-        currentOpenItem = null;
-      } else {
-        // Different item or first tap: close previous, open current
-        if (currentOpenItem) {
-          currentOpenItem.classList.remove('is-preview-open');
+    menuItem.addEventListener(
+      "click",
+      function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (currentOpenItem === menuItem) {
+          // Same item tapped again: close the preview
+          menuItem.classList.remove("is-preview-open");
+          currentOpenItem = null;
+        } else {
+          // Different item or first tap: close previous, open current
+          if (currentOpenItem) {
+            currentOpenItem.classList.remove("is-preview-open");
+          }
+          menuItem.classList.add("is-preview-open");
+          currentOpenItem = menuItem;
         }
-        menuItem.classList.add('is-preview-open');
-        currentOpenItem = menuItem;
-      }
-    }, { passive: false });
+      },
+      { passive: false },
+    );
   });
-  
+
   // Close preview when clicking outside any menu item
-  document.addEventListener('click', function (e) {
-    if (currentOpenItem && !currentOpenItem.contains(e.target)) {
-      currentOpenItem.classList.remove('is-preview-open');
-      currentOpenItem = null;
-    }
-  }, { passive: true });
+  document.addEventListener(
+    "click",
+    function (e) {
+      if (currentOpenItem && !currentOpenItem.contains(e.target)) {
+        currentOpenItem.classList.remove("is-preview-open");
+        currentOpenItem = null;
+      }
+    },
+    { passive: true },
+  );
 })();
 ```
 
 **Impact:**
+
 - 40 lines added
 - Only runs on touch devices (early exit on desktop)
 - No new dependencies
@@ -113,17 +128,19 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - Event efficient (2 listeners total)
 
 ### Total Changes
-| File | Additions | Lines | Type |
-|------|-----------|-------|------|
-| styles.css | 10 | CSS rule for toggle class |
-| script.js | 40 | Touch device detection + toggle handler |
-| **Total** | **50** | Under 60 line limit ✅ |
+
+| File       | Additions | Lines                                   | Type |
+| ---------- | --------- | --------------------------------------- | ---- |
+| styles.css | 10        | CSS rule for toggle class               |
+| script.js  | 40        | Touch device detection + toggle handler |
+| **Total**  | **50**    | Under 60 line limit ✅                  |
 
 ---
 
 ## Code Quality Assessment
 
 ### ✅ Requirements Met
+
 - ✅ No HTML structure changes
 - ✅ No CSS selector changes
 - ✅ No existing class names modified
@@ -140,6 +157,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - ✅ Touch-friendly
 
 ### Performance
+
 - **CSS overhead:** Negligible (10 lines = ~0.1 KB gzipped)
 - **JS overhead:** Negligible (40 lines, runs only on touch)
 - **No layout shifts:** Uses `transform` + `opacity` only
@@ -149,6 +167,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - **Event efficiency:** 2 listeners total
 
 ### Accessibility
+
 - ✅ **Keyboard:** Tab navigation works, `:focus-within` still active
 - ✅ **Screen readers:** Semantic HTML preserved, no hidden content
 - ✅ **Motion preferences:** `@media (prefers-reduced-motion)` respected
@@ -156,6 +175,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - ✅ **Focus management:** No focus trapped, natural tab flow
 
 ### Browser Support
+
 - ✅ `window.matchMedia()` - IE 10+
 - ✅ `classList.add/remove()` - IE 10+
 - ✅ `element.contains()` - IE 6+
@@ -167,11 +187,13 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 ## Files & Documentation
 
 ### Implementation Files
+
 - ✅ `styles.css` - 1 new CSS rule (10 lines)
 - ✅ `script.js` - 1 new IIFE section (40 lines)
 - ✅ `index.html` - No changes (unchanged)
 
 ### Documentation Files Created
+
 1. **MOBILE_PREVIEW_TOGGLE_FEATURE.md** (15.7 KB)
    - Detailed implementation docs
    - User workflows
@@ -188,6 +210,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
    - Troubleshooting guide
 
 ### Supporting Docs (Previous)
+
 - CAROUSEL_MOBILE_FIX.md - Carousel height fix
 - CAROUSEL_BEFORE_AFTER.md - Carousel comparison
 - CAROUSEL_MOBILE_FIX_SUMMARY.md - Carousel summary
@@ -199,6 +222,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 ## Testing Checklist
 
 ### ✅ Desktop Testing
+
 - [x] Hover over menu items (Firefox)
 - [x] Hover over menu items (Chrome)
 - [x] Hover over menu items (Safari)
@@ -208,6 +232,7 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - [x] Script doesn't run on desktop (verified via console)
 
 ### ✅ Mobile Testing Needed
+
 - [ ] Tap on iPhone (Safari)
 - [ ] Tap on Android (Chrome)
 - [ ] Tap same item to close
@@ -218,12 +243,14 @@ A **mobile-friendly toggle system** for menu item preview bubbles that:
 - [ ] Images load correctly
 
 ### ✅ Tablet Testing Needed
+
 - [ ] iPad portrait (touch behavior)
 - [ ] iPad landscape (might use hover)
 - [ ] Large Android tablet
 - [ ] Orientation changes work
 
 ### ✅ Accessibility Testing
+
 - [ ] Tab through menu items (keyboard)
 - [ ] Previews show on :focus-within
 - [ ] Screen reader announces content
@@ -259,6 +286,7 @@ Message: Feature: Mobile-friendly menu preview toggle
 ## Deployment Steps
 
 ### 1. Test Locally
+
 ```bash
 # Open DevTools console
 F12
@@ -274,6 +302,7 @@ F12
 ```
 
 ### 2. Verify Code
+
 ```bash
 cd /path/to/Hacobos
 
@@ -287,6 +316,7 @@ git diff main..Phone_fix -- styles.css script.js
 ```
 
 ### 3. Merge to Main
+
 ```bash
 git checkout main
 git merge Phone_fix
@@ -297,6 +327,7 @@ git merge Phone_fix
 ```
 
 ### 4. Deploy
+
 ```bash
 git push origin main
 
@@ -305,6 +336,7 @@ git push origin main
 ```
 
 ### 5. Post-Deployment Verification
+
 - [ ] Open on production website
 - [ ] Test desktop hover
 - [ ] Test mobile tap (on real phone)
@@ -317,23 +349,26 @@ git push origin main
 ## Key Features Summary
 
 ### Toggle Behavior
-| Action | Result |
-|--------|--------|
-| Tap menu item | Preview opens (slide up + fade in) |
-| Tap same item | Preview closes (slide down + fade out) |
+
+| Action             | Result                                   |
+| ------------------ | ---------------------------------------- |
+| Tap menu item      | Preview opens (slide up + fade in)       |
+| Tap same item      | Preview closes (slide down + fade out)   |
 | Tap different item | Smooth transition (close old + open new) |
-| Tap outside menu | Preview closes |
-| Hover (desktop) | Native CSS hover (unchanged) |
+| Tap outside menu   | Preview closes                           |
+| Hover (desktop)    | Native CSS hover (unchanged)             |
 
 ### Animation Details
-| Property | Value |
-|----------|-------|
-| Duration | 0.4s |
-| Easing | ease-out |
-| Type | opacity + transform |
+
+| Property  | Value                            |
+| --------- | -------------------------------- |
+| Duration  | 0.4s                             |
+| Easing    | ease-out                         |
+| Type      | opacity + transform              |
 | No motion | 0.1s (if prefers-reduced-motion) |
 
 ### Device Detection
+
 - **Desktop:** `matchMedia('(hover: hover)') = true` → uses CSS hover
 - **Mobile:** `matchMedia('(hover: hover)') = false` → uses toggle JS
 - **Hybrid:** Detects actual capability, not screen size
@@ -350,25 +385,28 @@ git push origin main
 ✅ **Code Quality:** Clean, minimal, well-documented  
 ✅ **Browser Support:** Works on all modern browsers + IE 10+  
 ✅ **Motion Preferences:** Respects OS motion settings  
-✅ **No Breaking Changes:** Fully backward compatible  
+✅ **No Breaking Changes:** Fully backward compatible
 
 ---
 
 ## Next Steps
 
 ### For Developers
+
 1. Review code in `styles.css` (line 768-775) and `script.js` (line 523-565)
 2. Test on real devices (iPhone, Android, iPad)
 3. Monitor production for any issues
 4. Gather user feedback on mobile experience
 
 ### For Designers
+
 1. Review visual guides in `MOBILE_PREVIEW_VISUAL_GUIDE.md`
 2. Verify animations feel smooth
 3. Check touch target sizes
 4. Consider future enhancements (swipe, haptics, etc.)
 
 ### For QA
+
 1. Run testing checklist (see above)
 2. Test on multiple devices/browsers
 3. Verify no console errors
@@ -379,11 +417,11 @@ git push origin main
 
 ## Documentation Resources
 
-| Document | Purpose | Size |
-|----------|---------|------|
-| MOBILE_PREVIEW_TOGGLE_FEATURE.md | Implementation details | 15.7 KB |
-| MOBILE_PREVIEW_VISUAL_GUIDE.md | Visual flows + scenarios | 25.9 KB |
-| This file | High-level summary | Current |
+| Document                         | Purpose                  | Size    |
+| -------------------------------- | ------------------------ | ------- |
+| MOBILE_PREVIEW_TOGGLE_FEATURE.md | Implementation details   | 15.7 KB |
+| MOBILE_PREVIEW_VISUAL_GUIDE.md   | Visual flows + scenarios | 25.9 KB |
+| This file                        | High-level summary       | Current |
 
 **Total documentation:** ~42 KB (comprehensive but concise)
 
@@ -427,4 +465,3 @@ A: Not included. You could add tracking by listening to the same click events (w
 **Branch:** `Phone_fix`  
 **Latest Commit:** `e8bed2f`  
 **Status:** Ready to merge and deploy 🚀
-
