@@ -27,6 +27,40 @@
     --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
+/* ==================== SCROLL REVEAL ANIMATIONS ==================== */
+/* Fade + slide-up animation for content blocks on scroll
+   Uses IntersectionObserver for performance (no scroll event listeners)
+   Respects prefers-reduced-motion for accessibility */
+
+@keyframes revealFadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Elements get this class when they enter the viewport */
+.is-visible {
+    animation: revealFadeSlideUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* Respect motion preference: instant visibility */
+@media (prefers-reduced-motion: reduce) {
+    @keyframes revealFadeSlideUp {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .is-visible {
+        animation: none;
+        opacity: 1;
+    }
+}
+
 /* Reset default browser styles */
 * {
     margin: 0;
@@ -42,6 +76,15 @@ body {
     background-color: var(--bg-light);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Smooth scrolling for anchor navigation (Task 2) */
+    scroll-behavior: smooth;
+}
+
+/* Disable smooth scroll if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 /* Container for consistent width and centering */
@@ -50,6 +93,18 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     
+}
+
+/* ==================== SCROLL REVEAL TARGETS ==================== */
+/* Apply initial state to elements that will be revealed on scroll */
+
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+.reveal-on-scroll.is-visible {
+    animation: revealFadeSlideUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 /* ==================== NAVBAR STYLES ==================== */
@@ -67,7 +122,7 @@ body {
 
 .navbar .container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; 
     align-items: center;
     gap: 2rem;
 }
@@ -616,6 +671,30 @@ body {
     pointer-events: none;
     /* Hardware acceleration for smooth fade-in */
     will-change: opacity;
+}
+
+/* ============================================================================
+ * MENU PREVIEW FALLBACK STATE - When image fails to load
+ * ============================================================================
+ * Shows placeholder content when image is missing or fails to load.
+ * Maintains same dimensions and styling as loaded image.
+ */
+
+.preview-image.has-error {
+    background-color: var(--bg-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Placeholder icon/text styling */
+.preview-image.has-error::after {
+    content: '📷';
+    font-size: 2.5rem;
+    opacity: 0.4;
 }
 
 /* Downward-pointing arrow/tail (speech bubble style) */
