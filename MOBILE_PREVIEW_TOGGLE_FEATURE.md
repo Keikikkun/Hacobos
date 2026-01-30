@@ -3,7 +3,7 @@
 **Feature:** Mobile-friendly tap-to-open/close menu item previews  
 **Status:** ✅ IMPLEMENTED & TESTED  
 **Branch:** `Phone_fix`  
-**Lines Added:** 50 (CSS 10 + JS 40)  
+**Lines Added:** 50 (CSS 10 + JS 40)
 
 ---
 
@@ -12,11 +12,13 @@
 Menu item preview images now have **touch-optimized behavior** on mobile/tablet while preserving the original **hover behavior on desktop**:
 
 ### Desktop (Unchanged)
+
 - Hover over menu item → preview bubble slides up + fades in
 - Move away → preview slides down + fades out
 - No clicks needed, pure CSS hover state
 
 ### Mobile/Touch (NEW)
+
 - **First tap** on menu item → preview slides up + fades in (stays open)
 - **Second tap** on same item → preview slides down + fades out (closes)
 - **Tap different item** → preview closes and new one opens
@@ -29,6 +31,7 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 ## Technical Implementation
 
 ### 1. CSS Addition (10 lines)
+
 **File:** `styles.css` (after line 765)
 
 ```css
@@ -38,20 +41,22 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
  * Desktop hover behavior takes precedence (see media query below)
  */
 .menu-item.is-preview-open .menu-item-preview {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
 }
 ```
 
 **What it does:**
+
 - Adds a new CSS rule that shows `.menu-item-preview` when `.is-preview-open` class is added
 - Uses exact same styling as `:hover` state → **animations remain consistent**
 - No changes to existing `.menu-item:hover` rule → **desktop unaffected**
 - Cascade works: hover rules + class-based rules both show preview
 
 ### 2. JavaScript Addition (40 lines)
+
 **File:** `script.js` (lines 523-565, before "End of script")
 
 ```javascript
@@ -64,51 +69,60 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 
 (function () {
   // Detect if device supports hover (desktop) or touch-only (mobile)
-  const isHoverCapable = window.matchMedia('(hover: hover)').matches;
+  const isHoverCapable = window.matchMedia("(hover: hover)").matches;
   if (isHoverCapable) return; // Desktop: use native hover, skip touch logic
-  
-  const menuItems = document.querySelectorAll('.menu-item[data-image]');
+
+  const menuItems = document.querySelectorAll(".menu-item[data-image]");
   if (menuItems.length === 0) return;
-  
+
   let currentOpenItem = null; // Track which item has preview open
-  
+
   // Toggle preview on menu item tap
   menuItems.forEach(function (menuItem) {
-    menuItem.addEventListener('click', function (e) {
-      e.preventDefault(); // Prevent default click behavior
-      e.stopPropagation(); // Prevent outside-click handler firing
-      
-      if (currentOpenItem === menuItem) {
-        // Same item tapped again: close the preview
-        menuItem.classList.remove('is-preview-open');
-        currentOpenItem = null;
-      } else {
-        // Different item or first tap: close previous, open current
-        if (currentOpenItem) {
-          currentOpenItem.classList.remove('is-preview-open');
+    menuItem.addEventListener(
+      "click",
+      function (e) {
+        e.preventDefault(); // Prevent default click behavior
+        e.stopPropagation(); // Prevent outside-click handler firing
+
+        if (currentOpenItem === menuItem) {
+          // Same item tapped again: close the preview
+          menuItem.classList.remove("is-preview-open");
+          currentOpenItem = null;
+        } else {
+          // Different item or first tap: close previous, open current
+          if (currentOpenItem) {
+            currentOpenItem.classList.remove("is-preview-open");
+          }
+          menuItem.classList.add("is-preview-open");
+          currentOpenItem = menuItem;
         }
-        menuItem.classList.add('is-preview-open');
-        currentOpenItem = menuItem;
-      }
-    }, { passive: false }); // passive: false needed for preventDefault
+      },
+      { passive: false },
+    ); // passive: false needed for preventDefault
   });
-  
+
   // Close preview when clicking outside any menu item
-  document.addEventListener('click', function (e) {
-    if (currentOpenItem && !currentOpenItem.contains(e.target)) {
-      currentOpenItem.classList.remove('is-preview-open');
-      currentOpenItem = null;
-    }
-  }, { passive: true });
+  document.addEventListener(
+    "click",
+    function (e) {
+      if (currentOpenItem && !currentOpenItem.contains(e.target)) {
+        currentOpenItem.classList.remove("is-preview-open");
+        currentOpenItem = null;
+      }
+    },
+    { passive: true },
+  );
 })();
 ```
 
 **What it does:**
+
 1. **Feature detection:** `window.matchMedia('(hover: hover)')` → true on desktop, false on touch devices
 2. **Early exit on desktop:** If device supports hover, script does nothing (hover works natively)
 3. **Touch logic only on mobile:** Script runs only on touch devices
 4. **Click handler:** Toggles `.is-preview-open` class on menu items
-5. **Toggle logic:** 
+5. **Toggle logic:**
    - First tap → add class (open)
    - Second tap same item → remove class (close)
    - Tap different item → switch which item is open
@@ -119,22 +133,23 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 
 ## Browser Behavior Matrix
 
-| Device | Hover Support | Script Runs? | Behavior |
-|--------|---|---|---|
-| Desktop (Chrome, Firefox, Safari, Edge) | Yes | NO | Native CSS hover works perfectly |
-| Laptop with touchscreen | Yes | NO | Hover takes precedence, no toggle needed |
-| iPad (portrait) | No (portrait) | YES | Tap to toggle, tap outside to close ✅ |
-| iPad (landscape) | Yes (some) | NO/YES | Auto-detects, behaves appropriately |
-| iPhone | No | YES | Tap to toggle, tap outside to close ✅ |
-| Android Phone | No | YES | Tap to toggle, tap outside to close ✅ |
-| Tablet (portrait) | No | YES | Tap to toggle works ✅ |
-| Tablet (landscape) | Maybe | Auto-detects | Behaves appropriately |
+| Device                                  | Hover Support | Script Runs? | Behavior                                 |
+| --------------------------------------- | ------------- | ------------ | ---------------------------------------- |
+| Desktop (Chrome, Firefox, Safari, Edge) | Yes           | NO           | Native CSS hover works perfectly         |
+| Laptop with touchscreen                 | Yes           | NO           | Hover takes precedence, no toggle needed |
+| iPad (portrait)                         | No (portrait) | YES          | Tap to toggle, tap outside to close ✅   |
+| iPad (landscape)                        | Yes (some)    | NO/YES       | Auto-detects, behaves appropriately      |
+| iPhone                                  | No            | YES          | Tap to toggle, tap outside to close ✅   |
+| Android Phone                           | No            | YES          | Tap to toggle, tap outside to close ✅   |
+| Tablet (portrait)                       | No            | YES          | Tap to toggle works ✅                   |
+| Tablet (landscape)                      | Maybe         | Auto-detects | Behaves appropriately                    |
 
 ---
 
 ## User Workflows
 
 ### Desktop User
+
 ```
 1. User browses menu on laptop
 2. Hovers over "Cheesecake" item
@@ -148,6 +163,7 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 ```
 
 ### Mobile User (iPhone)
+
 ```
 1. User browsing menu on iPhone
 2. Taps "Cheesecake" menu item
@@ -164,6 +180,7 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 ```
 
 ### Keyboard User (Accessibility)
+
 ```
 1. User tabs through menu items (Tab key)
 2. Menu item gets focus → :focus-within activates → preview shows
@@ -182,6 +199,7 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 ## Code Quality & Performance
 
 ### Performance Impact
+
 - **CSS overhead:** 10 lines, adds 1 rule (negligible)
 - **JS overhead:** 40 lines, runs only on touch devices
 - **No layout shift (CLS = 0):** All animations use `transform` + `opacity` only
@@ -191,24 +209,27 @@ Menu item preview images now have **touch-optimized behavior** on mobile/tablet 
 - **Memory:** One variable per page (`currentOpenItem`), minimal footprint
 
 ### Browser Compatibility
+
 ✅ `window.matchMedia()` - IE 10+  
 ✅ `forEach()` - IE 11 via transpiler  
 ✅ `classList.add/remove()` - IE 10+  
 ✅ `e.preventDefault()` - All browsers  
-✅ `element.contains()` - IE 6+  
+✅ `element.contains()` - IE 6+
 
 ### Accessibility
+
 ✅ **Keyboard:** Tab navigation works, `:focus-within` still active  
 ✅ **Screen readers:** No hidden content, semantic HTML preserved  
 ✅ **Motion preferences:** Existing `@media (prefers-reduced-motion)` still applies → instant show/hide on preference  
 ✅ **Touch targets:** Menu items remain large enough (minimum 44×44px)  
-✅ **Focus visible:** No focus trapped, natural tab flow  
+✅ **Focus visible:** No focus trapped, natural tab flow
 
 ---
 
 ## Testing Procedures
 
 ### Test 1: Desktop Hover (Chrome, Firefox, Safari)
+
 ```
 Steps:
 1. Open Hacobos website on desktop browser
@@ -223,6 +244,7 @@ Result: ✅ PASS (no changes to hover behavior)
 ```
 
 ### Test 2: iPhone Touch
+
 ```
 Device: iPhone (any model, iOS 13+)
 Browser: Safari
@@ -243,6 +265,7 @@ Result: ✅ PASS (toggle behavior working)
 ```
 
 ### Test 3: Android Phone Touch
+
 ```
 Device: Android phone (any version)
 Browser: Chrome
@@ -252,6 +275,7 @@ Result: ✅ PASS (same toggle behavior)
 ```
 
 ### Test 4: iPad (Portrait & Landscape)
+
 ```
 Device: iPad
 Browser: Safari
@@ -267,6 +291,7 @@ Landscape mode (resembles desktop):
 ```
 
 ### Test 5: Motion Preferences
+
 ```
 Device: Any (macOS, iOS, Windows)
 
@@ -280,6 +305,7 @@ Result: ✅ PASS (existing @media rule handles this)
 ```
 
 ### Test 6: Keyboard Navigation
+
 ```
 Device: Desktop
 Input: Keyboard only (Tab key)
@@ -294,6 +320,7 @@ Result: ✅ PASS (:focus-within rule still active)
 ```
 
 ### Test 7: Console Errors
+
 ```
 All devices/browsers:
 1. Open DevTools console (F12)
@@ -334,10 +361,10 @@ Result: ✅ PASS (no console.log calls)
 
 ## Files Modified
 
-| File | Change | Lines |
-|------|--------|-------|
-| `styles.css` | Added `.menu-item.is-preview-open` rule | +10 |
-| `script.js` | Added mobile toggle handler (Section 9) | +40 |
+| File         | Change                                  | Lines |
+| ------------ | --------------------------------------- | ----- |
+| `styles.css` | Added `.menu-item.is-preview-open` rule | +10   |
+| `script.js`  | Added mobile toggle handler (Section 9) | +40   |
 
 **Total:** 50 lines (CSS 10 + JS 40)
 
@@ -398,6 +425,7 @@ git revert <commit-hash>
 ## Success Criteria ✅
 
 All met:
+
 - ✅ Mobile previews toggle on tap (open/close/switch)
 - ✅ Desktop hover unchanged
 - ✅ Smooth animations preserved
@@ -430,4 +458,3 @@ A: matchMedia('(hover: hover)') is the W3C standard way to detect hover capabili
 
 **Q: What about transition delay?**  
 A: The `.is-preview-open` class applies instantly. The `transition` property on `.menu-item-preview` handles the animation timing (0.4s). This is how animations work in CSS—the class change is instant, the visual transition is animated.
-

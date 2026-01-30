@@ -6,41 +6,43 @@
 **Tablet/Phone:** ❌ Carousel images not showing properly
 
 ### CSS (Before)
+
 ```css
 #aboutCarousel {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: var(--shadow-lg);
-    position: relative;
-    min-height: 400px;  /* ← Fixed height, too tall for mobile */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  min-height: 400px; /* ← Fixed height, too tall for mobile */
 }
 
 .carousel-inner {
-    min-height: 400px;   /* ← Inherited from parent */
+  min-height: 400px; /* ← Inherited from parent */
 }
 
 .carousel-item {
-    min-height: 400px;   /* ← All items have same 400px height */
+  min-height: 400px; /* ← All items have same 400px height */
 }
 
 .carousel-control-prev,
 .carousel-control-next {
-    width: 44px;         /* ← Large buttons on mobile */
-    height: 44px;
-    left: 15px;          /* ← Carousel buttons take up space */
-    right: 15px;
+  width: 44px; /* ← Large buttons on mobile */
+  height: 44px;
+  left: 15px; /* ← Carousel buttons take up space */
+  right: 15px;
 }
 
 /* NO MOBILE MEDIA QUERY - carousel styling ignored on phones */
 @media (max-width: 768px) {
-    .about-content {
-        flex-direction: column;
-        /* ← No carousel styling! Images forced to 400px height */
-    }
+  .about-content {
+    flex-direction: column;
+    /* ← No carousel styling! Images forced to 400px height */
+  }
 }
 ```
 
 **Result on Phone:**
+
 - Carousel height: 400px (full phone width, too much space)
 - Images distorted or cut off
 - Buttons hard to tap (too small or in wrong position)
@@ -54,44 +56,46 @@
 **Tablet/Phone:** ✅ Carousel displays properly
 
 ### CSS (After)
+
 ```css
 /* Desktop styles unchanged */
 #aboutCarousel {
-    min-height: 400px;
+  min-height: 400px;
 }
 
 /* Mobile media query ADDED */
 @media (max-width: 768px) {
-    #aboutCarousel {
-        min-height: 250px;  /* ← Reduced for mobile */
-    }
+  #aboutCarousel {
+    min-height: 250px; /* ← Reduced for mobile */
+  }
 
-    .carousel-inner {
-        min-height: 250px;  /* ← Matches carousel */
-    }
+  .carousel-inner {
+    min-height: 250px; /* ← Matches carousel */
+  }
 
-    .carousel-item {
-        min-height: 250px;  /* ← All items responsive */
-    }
+  .carousel-item {
+    min-height: 250px; /* ← All items responsive */
+  }
 
-    .carousel-control-prev,
-    .carousel-control-next {
-        width: 36px;        /* ← Smaller but still tap-able */
-        height: 36px;
-        font-size: 18px;
-    }
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 36px; /* ← Smaller but still tap-able */
+    height: 36px;
+    font-size: 18px;
+  }
 
-    .carousel-control-prev {
-        left: 10px;         /* ← Better spacing on mobile */
-    }
+  .carousel-control-prev {
+    left: 10px; /* ← Better spacing on mobile */
+  }
 
-    .carousel-control-next {
-        right: 10px;
-    }
+  .carousel-control-next {
+    right: 10px;
+  }
 }
 ```
 
 **Result on Phone:**
+
 - Carousel height: 250px (proportional, fits better)
 - Images fully visible and properly scaled
 - Buttons sized for easy touch interaction
@@ -102,28 +106,31 @@
 ## Device-Specific Results
 
 ### iPhone (375×667px)
-| Aspect | Before | After |
-|--------|--------|-------|
+
+| Aspect          | Before                | After                 |
+| --------------- | --------------------- | --------------------- |
 | Carousel Height | 400px (60% of screen) | 250px (37% of screen) |
-| Images Visible | Partially cropped | Fully visible |
-| Button Size | 44×44px | 36×36px |
-| Overall Feel | Cramped | Spacious |
+| Images Visible  | Partially cropped     | Fully visible         |
+| Button Size     | 44×44px               | 36×36px               |
+| Overall Feel    | Cramped               | Spacious              |
 
 ### iPad (768×1024px)
-| Aspect | Before | After |
-|--------|--------|-------|
-| Carousel Height | 400px | 250px (still fits portrait mode) |
-| Images Visible | Mostly visible | Fully visible |
-| Button Size | 44×44px | 36×36px |
-| Overall Feel | Too tall | Balanced |
+
+| Aspect          | Before         | After                            |
+| --------------- | -------------- | -------------------------------- |
+| Carousel Height | 400px          | 250px (still fits portrait mode) |
+| Images Visible  | Mostly visible | Fully visible                    |
+| Button Size     | 44×44px        | 36×36px                          |
+| Overall Feel    | Too tall       | Balanced                         |
 
 ### Desktop (1920×1080px)
-| Aspect | Before | After |
-|--------|--------|-------|
-| Carousel Height | 400px | 400px (unchanged ✓) |
-| Images Visible | Fully visible | Fully visible (✓) |
-| Button Size | 44×44px | 44×44px (unchanged ✓) |
-| Overall Feel | Impressive | Impressive (✓) |
+
+| Aspect          | Before        | After                 |
+| --------------- | ------------- | --------------------- |
+| Carousel Height | 400px         | 400px (unchanged ✓)   |
+| Images Visible  | Fully visible | Fully visible (✓)     |
+| Button Size     | 44×44px       | 44×44px (unchanged ✓) |
+| Overall Feel    | Impressive    | Impressive (✓)        |
 
 ---
 
@@ -133,7 +140,7 @@
 **File Size Impact:** +23 bytes (negligible)  
 **Layout Shift (CLS):** 0 (no reflow)  
 **Animation FPS:** 60 (unchanged)  
-**Accessibility:** Improved (better touch targets)  
+**Accessibility:** Improved (better touch targets)
 
 ---
 
@@ -169,6 +176,7 @@
 ## Testing Commands
 
 **Visual Testing:**
+
 ```bash
 # Open in Chrome DevTools
 F12 → Device Toolbar → Select iPhone X
@@ -177,13 +185,15 @@ F12 → Device Toolbar → Select iPhone X
 ```
 
 **Console Testing:**
+
 ```javascript
 // Check carousel height on mobile viewport
-window.getComputedStyle(document.querySelector('#aboutCarousel')).minHeight
+window.getComputedStyle(document.querySelector("#aboutCarousel")).minHeight;
 // Expected: "250px" on mobile, "400px" on desktop
 ```
 
 **Real Device Testing:**
+
 ```bash
 # Deploy to server
 git push origin Phone_fix
@@ -215,4 +225,3 @@ The site will still function, carousel will just be too tall on mobile (original
 - ⏳ Commit to Phone_fix branch
 - ⏳ Merge to main
 - ⏳ Deploy to production
-
