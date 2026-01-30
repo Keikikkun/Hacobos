@@ -43,9 +43,25 @@
     }
 }
 
+@keyframes revealFadeSlideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0.6;
+        transform: translateY(20px);
+    }
+}
+
 /* Elements get this class when they enter the viewport */
 .is-visible {
-    animation: revealFadeSlideUp 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+    animation: revealFadeSlideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Fade out when leaving viewport */
+.reveal-on-scroll:not(.is-visible) {
+    animation: revealFadeSlideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 /* Respect motion preference: instant visibility */
@@ -55,7 +71,17 @@
         to { opacity: 1; transform: translateY(0); }
     }
     
+    @keyframes revealFadeSlideDown {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
     .is-visible {
+        animation: none;
+        opacity: 1;
+    }
+    
+    .reveal-on-scroll:not(.is-visible) {
         animation: none;
         opacity: 1;
     }
@@ -673,28 +699,16 @@ body {
     will-change: opacity;
 }
 
-/* ============================================================================
- * MENU PREVIEW FALLBACK STATE - When image fails to load
- * ============================================================================
- * Shows placeholder content when image is missing or fails to load.
- * Maintains same dimensions and styling as loaded image.
- */
-
+/* Placeholder text when image fails to load */
 .preview-image.has-error {
+    content: 'Image coming soon';
     background-color: var(--bg-medium);
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-secondary);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 500;
-}
-
-/* Placeholder icon/text styling */
-.preview-image.has-error::after {
-    content: '📷';
-    font-size: 2.5rem;
-    opacity: 0.4;
 }
 
 /* Downward-pointing arrow/tail (speech bubble style) */

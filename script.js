@@ -402,8 +402,9 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('is-visible');
-        // Unobserve after animation triggers (no need to watch again)
-        observer.unobserve(entry.target);
+      } else {
+        // Remove class when leaving viewport for repeatable animation
+        entry.target.classList.remove('is-visible');
       }
     });
   }, observerOptions);
@@ -481,8 +482,8 @@
     
     testImg.onerror = function () {
       // Image failed to load - show placeholder
-      console.warn(`Menu preview image not found: ${imagePath}`);
       previewImg.classList.add('has-error');
+      previewImg.textContent = 'Image coming soon';
       loadedImages.add(imageName); // Mark as attempted
     };
     
