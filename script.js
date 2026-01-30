@@ -521,5 +521,53 @@
 })();
 
 // ============================================================================
+// 9. MOBILE MENU PREVIEW TOGGLE - Touch-Friendly Open/Close Behavior
+// ============================================================================
+// On touch devices, menu previews toggle on tap (not persistent hover).
+// Desktop hover behavior unchanged. Tap same item to close, tap outside to close.
+// Smooth animations preserved. Respects prefers-reduced-motion.
+
+(function () {
+  // Detect if device supports hover (desktop) or touch-only (mobile)
+  const isHoverCapable = window.matchMedia('(hover: hover)').matches;
+  if (isHoverCapable) return; // Desktop: use native hover, skip touch logic
+  
+  const menuItems = document.querySelectorAll('.menu-item[data-image]');
+  if (menuItems.length === 0) return;
+  
+  let currentOpenItem = null; // Track which item has preview open
+  
+  // Toggle preview on menu item tap
+  menuItems.forEach(function (menuItem) {
+    menuItem.addEventListener('click', function (e) {
+      e.preventDefault(); // Prevent default click behavior
+      e.stopPropagation(); // Prevent outside-click handler firing
+      
+      if (currentOpenItem === menuItem) {
+        // Same item tapped again: close the preview
+        menuItem.classList.remove('is-preview-open');
+        currentOpenItem = null;
+      } else {
+        // Different item or first tap: close previous, open current
+        if (currentOpenItem) {
+          currentOpenItem.classList.remove('is-preview-open');
+        }
+        menuItem.classList.add('is-preview-open');
+        currentOpenItem = menuItem;
+      }
+    }, { passive: false }); // passive: false needed for preventDefault
+  });
+  
+  // Close preview when clicking outside any menu item
+  document.addEventListener('click', function (e) {
+    if (currentOpenItem && !currentOpenItem.contains(e.target)) {
+      currentOpenItem.classList.remove('is-preview-open');
+      currentOpenItem = null;
+    }
+  }, { passive: true });
+})();
+
+// ============================================================================
 // End of script
 // ============================================================================
+

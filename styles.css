@@ -765,6 +765,18 @@ body {
 }
 
 /*
+ * Mobile toggle state: Show preview when .is-preview-open class is present
+ * Allows tap-to-open, tap-same-to-close behavior on touch devices
+ * Desktop hover behavior takes precedence (see media query below)
+ */
+.menu-item.is-preview-open .menu-item-preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+/*
  * Accessibility: Respect motion preference
  * Users with prefers-reduced-motion: reduce will see instant appearance
  */
