@@ -508,6 +508,35 @@ body {
         font-size: 1rem;
         margin-bottom: 1.2rem;
     }
+
+    /* Mobile carousel - reduce height for better display on phones */
+    #aboutCarousel {
+        min-height: 250px;
+    }
+
+    .carousel-inner {
+        min-height: 250px;
+    }
+
+    .carousel-item {
+        min-height: 250px;
+    }
+
+    /* Smaller control buttons for mobile */
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    .carousel-control-prev {
+        left: 10px;
+    }
+
+    .carousel-control-next {
+        right: 10px;
+    }
 }
 
 /* ==================== MENU SECTION ==================== */
